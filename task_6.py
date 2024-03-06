@@ -1,10 +1,11 @@
-#Skeleton Program code for the AQA A Level Paper 1 Summer 2024 examination
-#this code should be used in conjunction with the Preliminary Material
-#written by the AQA Programmer Team
-#developed in the Python 3.9.4 programming environment
+# Skeleton Program code for the AQA A Level Paper 1 Summer 2024 examination
+# this code should be used in conjunction with the Preliminary Material
+# written by the AQA Programmer Team
+# developed in the Python 3.9.4 programming environment
 
 import random
 import os
+
 
 def Main():
     Again = "y"
@@ -14,13 +15,14 @@ def Main():
         if len(Filename) > 0:
             MyPuzzle = Puzzle(Filename + ".txt")
         else:
-            MyPuzzle = Puzzle(random.randint(1,3) ,8, int(8 * 8 * 0.6))
+            MyPuzzle = Puzzle(8, int(8 * 8 * 0.6))
         Score = MyPuzzle.AttemptPuzzle()
         print("Puzzle finished. Your score was: " + str(Score))
         Again = input("Do another puzzle? ").lower()
 
+
 class Puzzle():
-    def __init__(self, randNo, *args):
+    def __init__(self, *args):
         if len(args) == 1:
             self.__Score = 0
             self.__SymbolsLeft = 0
@@ -42,13 +44,13 @@ class Puzzle():
                 self.__Grid.append(C)
             self.__AllowedPatterns = []
             self.__AllowedSymbols = []
-            QPattern = Pattern("Q", "QQ**Q**QQ", randNo)
+            QPattern = Pattern("Q", "QQ**Q**QQ")
             self.__AllowedPatterns.append(QPattern)
             self.__AllowedSymbols.append("Q")
-            XPattern = Pattern("X", "X*X*X*X*X", randNo)
+            XPattern = Pattern("X", "X*X*X*X*X")
             self.__AllowedPatterns.append(XPattern)
             self.__AllowedSymbols.append("X")
-            TPattern = Pattern("T", "TTT**T**T", randNo)
+            TPattern = Pattern("T", "TTT**T**T")
             self.__AllowedPatterns.append(TPattern)
             self.__AllowedSymbols.append("T")
 
@@ -56,7 +58,7 @@ class Puzzle():
         try:
             with open(Filename) as f:
                 NoOfSymbols = int(f.readline().rstrip())
-                for Count in range (1, NoOfSymbols + 1):
+                for Count in range(1, NoOfSymbols + 1):
                     self.__AllowedSymbols.append(f.readline().rstrip())
                 NoOfPatterns = int(f.readline().rstrip())
                 for Count in range(1, NoOfPatterns + 1):
@@ -64,7 +66,7 @@ class Puzzle():
                     P = Pattern(Items[0], Items[1])
                     self.__AllowedPatterns.append(P)
                 self.__GridSize = int(f.readline().rstrip())
-                for Count in range (1, self.__GridSize * self.__GridSize + 1):
+                for Count in range(1, self.__GridSize * self.__GridSize + 1):
                     Items = f.readline().rstrip().split(",")
                     if Items[0] == "@":
                         C = BlockedCell()
@@ -85,6 +87,11 @@ class Puzzle():
         while not Finished:
             self.DisplayPuzzle()
             print("Current score: " + str(self.__Score))
+
+            user_input = input("Do u want to save the file").strip().upper()
+            if user_input[0] == "Y":
+                return self.SavePuzzle()
+
             Row = -1
             Valid = False
             while not Valid:
@@ -114,6 +121,12 @@ class Puzzle():
         print()
         self.DisplayPuzzle()
         print()
+        return self.__Score
+
+    def SavePuzzle(self):
+        filename = input("Give a file name, as in [ur file name].txt\nFile name: ")
+        with open(f"{filename}.txt", "w") as file:
+            file.write(self.) # todo:sdhsfds
         return self.__Score
 
     def __GetCell(self, Row, Column):
@@ -182,11 +195,11 @@ class Puzzle():
                 print("|")
                 print(self.__CreateHorizontalLine())
 
+
 class Pattern():
-    def __init__(self, SymbolToUse, PatternString, PatternCount):
+    def __init__(self, SymbolToUse, PatternString):
         self.__Symbol = SymbolToUse
         self.__PatternSequence = PatternString
-        self.PatternCount = PatternCount
 
     def MatchesPattern(self, PatternString, SymbolPlaced):
         if SymbolPlaced != self.__Symbol:
@@ -197,18 +210,11 @@ class Pattern():
                     return False
             except Exception as ex:
                 print(f"EXCEPTION in MatchesPattern: {ex}")
-        if self.PatternCount > 0:
-            self.PatternCount -= 1
-            self.OutputPatternCount()
-            return True
-        else:
-            print("No more patterns of that letter allowed")
-            return False
-    def OutputPatternCount(self):
-        print(f"You have {self.PatternCount} '{self.__Symbol}' patter left to place.")
+        return True
 
     def GetPatternSequence(self):
-      return self.__PatternSequence
+        return self.__PatternSequence
+
 
 class Cell():
     def __init__(self):
@@ -217,10 +223,10 @@ class Cell():
 
     def GetSymbol(self):
         if self.IsEmpty():
-          return "-"
+            return "-"
         else:
-          return self._Symbol
-    
+            return self._Symbol
+
     def IsEmpty(self):
         if len(self._Symbol) == 0:
             return True
@@ -242,6 +248,7 @@ class Cell():
     def UpdateCell(self):
         pass
 
+
 class BlockedCell(Cell):
     def __init__(self):
         super(BlockedCell, self).__init__()
@@ -249,6 +256,7 @@ class BlockedCell(Cell):
 
     def CheckSymbolAllowed(self, SymbolToCheck):
         return False
+
 
 if __name__ == "__main__":
     Main()
